@@ -3,7 +3,7 @@ CREATE TABLE `cmpe226p2`.`user` (
   `fname` VARCHAR(45) NULL,
   `lname` VARCHAR(45) NULL,
   `email` VARCHAR(45) NULL,
-  `password` VARCHAR(256) NULL,
+  `password` VARCHAR(60) NULL,
   `type` VARCHAR(10) NULL,
   PRIMARY KEY (`id`));
 
