@@ -3,18 +3,23 @@ import re
 import bcrypt
 from flask import Blueprint, request, session
 from dbConnection import DBConnection
+from helper import get_user_wallet
 
 users = Blueprint('users', __name__)
 
 @users.route('/register', methods=["GET", "POST"])
 def register():
     session['logged_in'] = False
-    request_body = json.loads(request.data)
+    
+    try:
+        request_body = json.loads(request.data)
+    except:
+        return {"error": 'Invalid request body'}, 400
 
     email = request_body.get('email')
     if not email:
-        return {"error": "Email is required"}
-    db = DBConnection.Instance()
+        return {"error": "Email is required"}, 400
+    db = DBConnection()
     email_exists_query = "select * from user where email='{}'".format(email)
 
     db.cursor.execute(email_exists_query)
@@ -46,7 +51,7 @@ def register():
     except Exception as e:
         db.conn.rollback()
         print(e)
-        return {"error": "Error while registring the user"}, 400
+        return {"error": "Error while registring the user"}, 500
 
     retrieve_query = "select id, fname, lname, email, type from user where email='{}'".format(email)
     db.cursor.execute(retrieve_query)
@@ -75,7 +80,7 @@ def login():
         print("Missing required field")
         return {"error": "Missing required field"}, 400
 
-    db = DBConnection.Instance()
+    db = DBConnection()
     email_exists_query = "select * from user where email='{}'".format(email)
 
     db.cursor.execute(email_exists_query)
@@ -108,15 +113,51 @@ def logout():
     session.pop('user')
     return {}
 
-# @users.route('/test', methods=['GET'])
-# def test2():
-#     print(session)
-#     try:
+@users.route('/user/<id>')
+def get_user(id):
+    try:
+        id = int(id)
+    except:
+        print("Invalid ID")
+        return {"error": "Invalid ID"}, 400
 
-#         if session['logged_in']:
-#             print(session['user'])
-#             return "Authorized"
-#     except:
-#         pass
+    if not session.get('logged_in') or session['user']["id"] != id:
+        return {'error': 'Authentication failed'}, 401
 
-#     return "Unauthorized", 401
+    db = DBConnection()
+    user_query = "select * from user where id={}".format(id)
+    db.cursor.execute(user_query)
+    data = db.cursor.fetchone()
+
+    if not data:
+        return {'error': 'User does not exists'}, 404
+
+    print(data)
+    response = {
+        "id": data[0],
+        "fname": data[1],
+        "lname": data[2],
+        "email": data[3],
+        "type": data[5]
+    }
+
+    return response
+
+@users.route('/user/<id>/wallet')
+def get_wallet(id):
+
+    try:
+        id = int(id)
+    except:
+        print("Invalid ID")
+        return {"error": "Invalid ID"}, 400
+    
+    if not session.get('logged_in') or session['user']["id"] != id:
+        return {'error': 'Authentication failed'}, 401
+        
+    wallet = get_user_wallet(id)
+
+    if not wallet:
+        return {'error': 'Wallet for user does not exists'}, 400
+    
+    return wallet
