@@ -30,7 +30,7 @@ CREATE TABLE `cmpe226p2`.`stock` (
 CREATE TABLE `cmpe226p2`.`company` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `code_name` VARCHAR(10) NULL,
+  `code_name` VARCHAR(10) NULL UNIQUE,
   `total_stocks` INT NULL DEFAULT 0,
   `address` VARCHAR(100) NULL,
   `about` VARCHAR(256) NULL,
