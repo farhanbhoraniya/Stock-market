@@ -77,3 +77,41 @@ def get_company_by_id(id):
     }
 
     return company
+
+def get_stock_by_id(id):
+    db = DBConnection()
+    stock_query = "select * from stock where id={}".format(id)
+
+    db.cursor.execute(stock_query)
+    data = db.cursor.fetchone()
+
+    if not data:
+        return 
+
+    stock = {
+        'id': data[0],
+        'company': data[1],
+        'current_price': data[2],
+        'available_stocks': data[3]
+    }
+
+    return stock
+
+def get_stock_by_company(id):
+    db = DBConnection()
+    stock_query = "select * from stock where company='{}'".format(id)
+
+    db.cursor.execute(stock_query)
+    data = db.cursor.fetchone()
+
+    if not data:
+        return 
+
+    stock = {
+        'id': data[0],
+        'company': data[1],
+        'current_price': data[2],
+        'available_stocks': data[3]
+    }
+
+    return stock

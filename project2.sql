@@ -22,7 +22,7 @@ CREATE TABLE `cmpe226p2`.`wallet_item` (
 
 CREATE TABLE `cmpe226p2`.`stock` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `company` INT NULL,
+  `company` INT NULL UNIQUE,
   `current_price` FLOAT NULL,
   `available_stocks` INT NULL DEFAULT 0,
   PRIMARY KEY (`id`));
@@ -51,3 +51,18 @@ CREATE TABLE `cmpe226p2`.`transactions` (
   `user` INT NULL,
   `stock` INT NULL,
   PRIMARY KEY (`id`));
+
+DELIMITER //
+
+CREATE PROCEDURE updatePrice(stockId INT, price FLOAT)
+BEGIN
+DECLARE exit handler for sqlexception ROLLBACK;
+DECLARE exit handler for sqlwarning ROLLBACK;
+
+START TRANSACTION;
+update stock set current_price=price where id=stockId;
+insert into price_history values(stockId, CURRENT_TIMESTAMP(  ), price);
+COMMIT;
+END //
+
+DELIMITER ;

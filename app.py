@@ -3,6 +3,7 @@ from flask import Flask, request
 from user import users
 from wallet import wallet
 from company import company
+from stock import stock
 # from test import testprint
 
 from config import SECRET_KEY
@@ -12,5 +13,6 @@ app.secret_key = SECRET_KEY
 app.register_blueprint(users)
 app.register_blueprint(wallet)
 app.register_blueprint(company)
+app.register_blueprint(stock)
 # app.register_blueprint(testprint)
 app.run(debug=True)
