@@ -142,7 +142,7 @@ def update_company(id):
         update_string += "name='{}'".format(request_body['name'])
         
 
-    if request_body.get('total_stocks'):
+    if request_body.get('total_stocks') is not None and type(request_body.get('total_stocks')) != str:
         update_string += "total_stocks={}".format(request_body['total_stocks'])
 
     if request_body.get('address'):

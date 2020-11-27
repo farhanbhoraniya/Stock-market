@@ -51,7 +51,7 @@ def get_stocks():
         return {'error': 'Authentication failed'}, 401
 
     stock_query = """select stock.id, current_price, available_stocks, company.id as companyID, name, total_stocks, 
-    address, about from stock join company on stock.company=company.id"""
+    address, about, code_name from stock join company on stock.company=company.id"""
 
     db = DBConnection()
     try:
@@ -66,14 +66,14 @@ def get_stocks():
     for item in result:
         temp = {
             "id": item[0],
-            
             "current_price": item[1],
             "available_stocks": item[2],
             "company": item[3],
             "name": item[4],
             "total_stocks": item[5],
             "address": item[6],
-            "about": item[7]
+            "about": item[7],
+            "code_name": item[8]
         }
         response.append(temp)
 
