@@ -80,7 +80,9 @@ def get_company_by_id(id):
 
 def get_stock_by_id(id):
     db = DBConnection()
-    stock_query = "select * from stock where id={}".format(id)
+    stock_query = """select stock.id, current_price, available_stocks, 
+    company.id as companyID, name, total_stocks, address, about from stock join company on stock.company=company.id 
+    where stock.id={}""".format(id)
 
     db.cursor.execute(stock_query)
     data = db.cursor.fetchone()
@@ -89,17 +91,22 @@ def get_stock_by_id(id):
         return 
 
     stock = {
-        'id': data[0],
-        'company': data[1],
-        'current_price': data[2],
-        'available_stocks': data[3]
+        "id": data[0],
+        "current_price": data[1],
+        "available_stocks": data[2],
+        "company": data[3],
+        "name": data[4],
+        "total_stocks": data[5],
+        "address": data[6],
+        "about": data[7]
     }
 
     return stock
 
 def get_stock_by_company(id):
     db = DBConnection()
-    stock_query = "select * from stock where company='{}'".format(id)
+    stock_query = """select stock.id, current_price, available_stocks, 
+    company.id as companyID, name, total_stocks, address, about from company join stock where stock.company='{}'""".format(id)
 
     db.cursor.execute(stock_query)
     data = db.cursor.fetchone()
@@ -108,10 +115,14 @@ def get_stock_by_company(id):
         return 
 
     stock = {
-        'id': data[0],
-        'company': data[1],
-        'current_price': data[2],
-        'available_stocks': data[3]
+        "id": data[0],
+        "current_price": data[1],
+        "available_stocks": data[2],
+        "company": data[3],
+        "name": data[4],
+        "total_stocks": data[5],
+        "address": data[6],
+        "about": data[7]
     }
 
     return stock

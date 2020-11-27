@@ -7,7 +7,7 @@ stock = Blueprint('stock', __name__)
 
 @stock.route('/stock', methods=['POST'])
 def create_stock():
-    if not session['logged_in'] or session['user']["type"] != "admin":
+    if not session.get('logged_in') or session['user']["type"] != "admin":
         return {'error': 'Authentication failed'}, 401
     
     try:
@@ -47,10 +47,11 @@ def create_stock():
 
 @stock.route('/stocks', methods=['GET'])
 def get_stocks():
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return {'error': 'Authentication failed'}, 401
 
-    stock_query = "select * from stock"
+    stock_query = """select stock.id, current_price, available_stocks, company.id as companyID, name, total_stocks, 
+    address, about from stock join company on stock.company=company.id"""
 
     db = DBConnection()
     try:
@@ -65,9 +66,14 @@ def get_stocks():
     for item in result:
         temp = {
             "id": item[0],
-            "company": item[1],
-            "current_price": item[2],
-            "available_stocks": item[3]
+            
+            "current_price": item[1],
+            "available_stocks": item[2],
+            "company": item[3],
+            "name": item[4],
+            "total_stocks": item[5],
+            "address": item[6],
+            "about": item[7]
         }
         response.append(temp)
 
@@ -75,7 +81,7 @@ def get_stocks():
 
 @stock.route('/stock/<id>', methods=['GET'])
 def get_stock_id(id):
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return {'error': 'Authentication failed'}, 401
 
     try:
@@ -93,7 +99,7 @@ def get_stock_id(id):
 
 @stock.route('/stock/<id>', methods=['PUT'])
 def update_stock_by_id(id):
-    if not session['logged_in'] or session['user']["type"] != "admin":
+    if not session.get('logged_in') or session['user']["type"] != "admin":
         return {'error': 'Authentication failed'}, 401
 
     try:

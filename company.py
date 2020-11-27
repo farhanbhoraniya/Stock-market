@@ -8,7 +8,7 @@ company = Blueprint('company', __name__)
 @company.route('/company', methods=['POST'])
 def create_company():
     
-    if not session['logged_in'] or session['user']["type"] != "admin":
+    if not session.get('logged_in') or session['user']["type"] != "admin":
         return {'error': 'Authentication failed'}, 401
 
     try:
@@ -56,7 +56,7 @@ def get_companies():
     
     company_query = "select * from company"
     
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return {'error': 'Authentication failed'}, 401
 
     db = DBConnection()
@@ -85,7 +85,7 @@ def get_companies():
 @company.route('/company/<id>', methods=['GET'])
 def get_company_id(id):                                                                                                 
     
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return {'error': 'Authentication failed'}, 401
     
     try:
@@ -104,7 +104,7 @@ def get_company_id(id):
 @company.route('/company/code/<code>', methods=['GET'])
 def get_company_code(code):                                                                                                 
     
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return {'error': 'Authentication failed'}, 401
 
     company = get_company_by_code(code)
@@ -117,7 +117,7 @@ def get_company_code(code):
 @company.route('/company/<id>', methods=['PUT'])
 def update_company(id):
 
-    if not session['logged_in'] or session['user']["type"] != "admin":
+    if not session.get('logged_in') or session['user']["type"] != "admin":
         return {'error': 'Authentication failed'}, 401
 
     try:
@@ -177,7 +177,7 @@ def update_company(id):
 
 @company.route('/company/<id>/stock', methods=['GET'])
 def get_company_stocks(id):
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return {'error': 'Authentication failed'}, 401
 
     try:
@@ -195,7 +195,7 @@ def get_company_stocks(id):
 
 @company.route('/company/<id>/stock', methods=['PUT'])
 def update_company_stocks(id):
-    if not session['logged_in'] or session['user']["type"] != "admin":
+    if not session.get('logged_in') or session['user']["type"] != "admin":
         return {'error': 'Authentication failed'}, 401
 
     try:

@@ -16,7 +16,7 @@ def create_wallet():
     if not user:
         return {'error': 'User ID is required'}, 400
 
-    if not session['logged_in'] or session['user']["id"] != user:
+    if not session.get('logged_in') or session['user']["id"] != user:
         return {'error': 'Authentication failed'}, 401
 
     wallet_amount = 0
@@ -55,7 +55,7 @@ def get_wallet(id):
     if not wallet:
         return {'error': 'Wallet does not exists'}, 404
 
-    if not session['logged_in'] or session['user']["id"] != wallet['owner']:
+    if not session.get('logged_in') or session['user']["id"] != wallet['owner']:
         return {'error': 'Authentication failed'}, 401
 
     return wallet
@@ -74,7 +74,7 @@ def update_wallet(id):
     if not wallet:
         return {'error': 'Wallet does not exists'}, 404
 
-    if not session['logged_in'] or session['user']["id"] != wallet['owner']:
+    if not session.get('logged_in') or session['user']["id"] != wallet['owner']:
         return {'error': 'Authentication failed'}, 401
 
     try:
