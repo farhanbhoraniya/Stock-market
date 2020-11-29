@@ -25,8 +25,8 @@ def buy():
         return {'error': 'Authentication failed'}, 401
     
     try:
-        stock = request_body.get('stock_id')
-        qty = request_body.get('quantity')
+        stock = request_body['stock_id']
+        qty = request_body['quantity']
     except:
         print("Missing required field")
         return {"error": "Missing required field"}, 400    
@@ -66,8 +66,8 @@ def sell():
         return {'error': 'Authentication failed'}, 401
     
     try:
-        stock = request_body.get('stock_id')
-        qty = request_body.get('quantity')
+        stock = request_body['stock_id']
+        qty = request_body['quantity']
     except:
         print("Missing required field")
         return {"error": "Missing required field"}, 400    
@@ -117,10 +117,7 @@ def deposit():
         return {"error": "Deposit at least 1 dollar"}, 400
 
     db = DBConnection()
-    wallet_exists_query = "select wallet from user where id={}".format(user)
-
-    db.cursor.execute(wallet_exists_query)
-    data = db.cursor.fetchone()
+    data = get_user_wallet(user)
     if not data:
         return {"error": "There's no wallet related to this User"}, 400
 
@@ -149,7 +146,7 @@ def withdraw():
         return {'error': 'Authentication failed'}, 401
     
     try:
-        wdr_amt = request_body.get('withdraw_amount')
+        wdr_amt = request_body['withdraw_amount']
     except:
         print("Missing required field")
         return {"error": "Missing required field"}, 400    
@@ -159,10 +156,7 @@ def withdraw():
         return {"error": "withdraw at least 1 dollar"}, 400
 
     db = DBConnection()
-    wallet_exists_query = "select wallet from user where id={}".format(user)
-
-    db.cursor.execute(wallet_exists_query)
-    data = db.cursor.fetchone()
+    data = get_user_wallet(user)
     if not data:
         return {"error": "There's no wallet related to this User"}, 400
 
@@ -174,8 +168,8 @@ def withdraw():
     return {"Success": "Withdraw Request Completed Successfully "}, 200
 
 @transactions.route('/transactions/<id>', methods=['GET'])
-def get_txns():
-    if not session['logged_in']:
+def get_txns(id):
+    if not session.get('logged_in'):
         return {'error': 'Authentication failed'}, 401
 
     try:
@@ -183,7 +177,7 @@ def get_txns():
     except:
         print("Invalid user ID")
         return {"error": "Invalid ID"}, 400
-
+    
     txn_query = "select * from transactions where user={}".format(uid)
     
     db = DBConnection()
@@ -210,8 +204,60 @@ def get_txns():
 
     return jsonify(response)
 
+@transactions.route('/portfolio/<id>', methods=['GET'])
+def get_portfolio(id):
+    
+    try:
+        uid = int(id)
+        # request_body = json.loads(request.data)
+    except:
+        return {"error": 'Invalid ID'}, 400
+        
+    if not session.get('logged_in') or session['user']['id'] != uid:
+        return {'error': 'Authentication failed'}, 401
+    # uid = request_body.get('id')
+    print(uid)
+    
+    # if not uid:
+    #     return {'error': 'User ID is required'}, 400
 
+    portfolio_query = "select * from all_portfolio where USERID={}".format(uid)
+    
+    db = DBConnection()
+    try:
+        db.cursor.execute(portfolio_query)
+        result = db.cursor.fetchall()
+    except Exception as e:
+        print(e)
+        return {"error": "Error while getting the portfolio"}, 500
 
+    response = []    
+    if len(result) > 0:
+        u =  {"User ID"          : result[0][0],
+             "User Firstname"   : result[0][1],
+             "Buying Power"     : result[0][6]};
+        response.append(u)
 
-
+        for item in result:
+            temp = {
+            "Ticker" : item[2],
+            "Share Price" : item[3],
+            "No. of Shares owned": item[4],
+            "Value of these shares": item[5]
+            }
+            response.append(temp)
+    else:
+        profile_query = "select * from all_profiles where USERID={}".format(uid)
+        try:
+            db.cursor.execute(profile_query)
+            result = db.cursor.fetchone()
+        except Exception as e:
+            print(e)
+            return {"error": "Error while getting the user profiles"}, 500
+        u =  {"User ID"          : result[0], 
+             "User Firstname"   : result[1],
+             "Buying Power"     : result[2]};
+        response.append(u)
+        
+    return jsonify(response)
     

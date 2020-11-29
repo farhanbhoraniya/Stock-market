@@ -178,7 +178,7 @@ def admin_company_operations():
             total_stocks = input("Total stokcs of a company ")
             address = input("Address of a company ")
             about = input("About company")
-            logging.info("Updating the company with ID " + str(ID))
+            logging.info("Updating the company with ID " + str(id))
             try:
                 id = int(id)
             except Exception as e:
@@ -536,11 +536,240 @@ def user_stock_operations():
             continue
 
 def user_transactions():
-    pass
+    user_id = user_details['id']
+    url = base_url + "/transactions/{}".format(user_id)
+    r = requests.get(url, cookies=cookies)
+    try:
+        data = json.loads(r.text)
+    except Exception as e:
+        logging.error(e)
+        print("Error while getting the transactions")
+        return
+    if r.status_code == 200:
+        table = BeautifulTable()
+        
+        for item in data:
+            table.rows.append([item['id'], item['date_time'], item['user'], item['type'], item['stock'], item['qty'], item['price'], item['amount']])
+
+        table.columns.header = ["ID", "Date Time", "User", "Type", "Stock", "Quantity", "Price", "Amount"]
+        print(table)
+    else:
+        print("Error", data['error'])
 
 def user_wallet():
-    pass
+    while True:
+        print("-------------------")
+        print("1. Create wallet")
+        print("2. Check user wallet balance")
+        print("3. View user portfolio")
+        print("4. Deposit amount")
+        print("5. Withdraw amount")
+        print("6. Buy stocks")
+        print("7. Sell stocks")
+        print("0. Go back")
 
+        input_value = input("Select option ")
+        if input_value == "1":
+            user_id = user_details['id']
+            url = base_url + '/wallet'
+            data = {
+                'user': user_id
+            }
+
+            r = requests.post(url, data=json.dumps(data), cookies=cookies)
+
+            try:
+                resp = json.loads(r.text)
+            except Exception as e:
+                print("Error while creating the wallet")
+                logging.error(e)
+                continue
+
+            if r.status_code == 200:
+                print("Wallet created")
+            else:
+                print("Error while creating the wallet")
+
+        elif input_value == "2":
+            user_id = user_details['id']
+            url = base_url + "/user/{}/wallet".format(user_id)
+
+            r = requests.get(url, cookies=cookies)
+            try:
+                data = json.loads(r.text)
+            except Exception as e:
+                logging.error(e)
+                print("Error while checking the user wallet balace")
+                continue
+            
+            if r.status_code == 200:
+                print("Wallet balance:", data.get('wallet_amount'))
+            else:
+                logging.error('Error ' + data['error'])
+                continue
+        elif input_value == "3":
+            user_id = user_details['id']
+            url = base_url + "/portfolio/{}".format(user_id)
+
+            r = requests.get(url, cookies=cookies)
+
+            try:
+                response = json.loads(r.text)
+            except Exception as e:
+                logging.error(e)
+                print("Error while getting the portfolio")
+                continue
+
+            if r.status_code == 200:
+                if len(response) < 0:
+                    continue
+                user = response[0]
+                print("-------------------")
+                print("User ID:", user['User ID'])
+                print("User Name:", user['User Firstname'])
+                print('Buying Power:', user['Buying Power'])
+
+                table = BeautifulTable()
+                data = response[1:]
+                for item in data:
+                    table.rows.append([item['Ticker'], item['Share Price'], item['No. of Shares owned'], item['Value of these shares']])
+
+                table.columns.header = ["Ticker", "Share Price", 'No. of Shares owned', "Value of these shares"]
+                print(table)
+            else:
+                print("Error ", response['error'])
+            
+            pass
+        elif input_value == "4":
+            user_id = user_details['id']
+            try:
+                deposit_amount = int(input("Enter amount to deposit "))
+            except Exception as e:
+                print("Invalid amount")
+                logging.error(e)
+                continue
+            
+            url = base_url + "/deposit"
+
+            data = {
+                "user": user_id,
+                "deposit_amount": deposit_amount
+            }
+
+            r = requests.post(url, data=json.dumps(data), cookies=cookies)
+
+            try:
+                response = json.loads(r.text)
+            except Exception as e:
+                logging.error(e)
+                print("Error while depositing the amount")
+                continue
+
+            if r.status_code == 200:
+                print("Amount deposited")
+            else:
+                print("Error:", response['error'])
+            
+        elif input_value == "5":
+            user_id = user_details['id']
+            try:
+                deposit_amount = int(input("Enter amount to withdraw "))
+            except Exception as e:
+                print("Invalid amount")
+                logging.error(e)
+                continue
+            
+            url = base_url + "/withdraw"
+
+            data = {
+                "user": user_id,
+                "withdraw_amount": deposit_amount
+            }
+
+            r = requests.post(url, data=json.dumps(data), cookies=cookies)
+
+            try:
+                response = json.loads(r.text)
+            except Exception as e:
+                logging.error(e)
+                print("Error while withdrawing the amount")
+                continue
+
+            if r.status_code == 200:
+                print("Amount withdrawed")
+            else:
+                print("Error:", response['error'])
+        
+        elif input_value == "6":
+            code_name = input("Code name of the stock you want to buy ")
+            try:
+                quantity = int(input("Quantity "))
+            except Exception as e:
+                logging.error(e)
+                print("Invalid input")
+                continue
+
+            user_id = user_details['id']
+
+            data = {
+                'user': user_id,
+                "stock_id": code_name,
+                "quantity": quantity
+            }
+
+            url = base_url + "/buy"
+
+            r = requests.post(url, data=json.dumps(data), cookies=cookies)
+
+            try:
+                response = json.loads(r.text)
+            except Exception as e:
+                logging.error(e)
+                print("Error while buying the stocks")
+                continue
+
+            if r.status_code == 200:
+                print("Stock bought successfully")
+            else:
+                print("Error", response['error'])
+            
+        elif input_value == "7":
+            code_name = input("Code name of the stock you want to sell ")
+            try:
+                quantity = int(input("Quantity "))
+            except Exception as e:
+                logging.error(e)
+                print("Invalid input")
+                continue
+
+            user_id = user_details['id']
+
+            data = {
+                'user': user_id,
+                "stock_id": code_name,
+                "quantity": quantity
+            }
+
+            url = base_url + "/sell"
+
+            r = requests.post(url, data=json.dumps(data), cookies=cookies)
+
+            try:
+                response = json.loads(r.text)
+            except Exception as e:
+                logging.error(e)
+                print("Error while selling the stocks")
+                continue 
+            print(response, r.status_code)
+            if r.status_code == 200:
+                print("Stock sold successfully")
+            else:
+                print("Error", response['error'])
+        elif input_value == "0":
+            break
+        else:
+            print("Invalid input")
+            continue
 def logout():
     global cookies
     global logged_in

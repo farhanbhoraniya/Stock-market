@@ -1,3 +1,7 @@
+drop database if exists cmpe226p2;
+create database cmpe226p2;
+use cmpe226p2;
+
 CREATE TABLE `cmpe226p2`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `fname` VARCHAR(45) NULL,
@@ -291,6 +295,10 @@ if walletamount < wdr_amt THEN
 END IF;
 
 Update wallet SET wallet_amount = (wallet_amount - wdr_amt) where owner= userID;
+
+insert INTO transactions (type,date_time,amount,user) 
+values ("withdraw", CURRENT_TIMESTAMP(  ), wdr_amt, userID);
+
 COMMIT;
 END //
 
@@ -308,7 +316,113 @@ DECLARE exit handler for sqlwarning ROLLBACK;
 
 START TRANSACTION;
 Update wallet SET wallet_amount = (wallet_amount + dep_amt) where owner= userID;
+
+insert INTO transactions (type,date_time,amount,user) 
+values ("deposit", CURRENT_TIMESTAMP(  ), dep_amt, userID);
+
 COMMIT;
 END //
 
 DELIMITER ;
+
+use cmpe226p2;
+
+create or replace VIEW all_withdrawals as 
+select 
+	u.id  USERID, 
+	u.fname NAME,
+	t.amount WITHDRAW_AMT
+	from user u, transactions t 
+where 
+    t.user = u.id  and 
+    UPPER(t.type) = 'WITHDRAW';
+    
+select * from all_withdrawals;
+
+create or replace VIEW all_buys as 
+select 
+	u.id  USERID, 
+	u.fname NAME,
+    c.code_name TICKER, 
+    t.price BUYING_PRICE, 
+    t.qty SHARES_BOUGHT, 
+	t.amount INVESTED_AMT
+	from user u, stock s, transactions t, company c 
+where 
+	s.company = c.id and 
+    t.user = u.id  and 
+    t.stock = s.id and 
+    UPPER(t.type) = 'BUY';
+    
+select * from all_buys; 
+
+create or replace VIEW all_deposits as 
+select 
+	u.id  USERID, 
+	u.fname NAME,
+	t.amount DEPOSIT_AMT
+	from user u, transactions t 
+where 
+    t.user = u.id  and 
+    UPPER(t.type) = 'DEPOSIT';
+    
+select * from all_deposits; 
+
+create or replace VIEW all_portfolio as 
+select 
+	u.id  USERID, 
+	fname NAME,
+    c.code_name TICKER, 
+    s.current_price SHARE_PRICE, 
+    wi.quantity SHARES, 
+	(s.current_price * wi.quantity) VALUE, 
+    w.wallet_amount BUYING_POWER
+	from user u, stock s, wallet w, wallet_item wi, company c 
+where 
+	s.company = c.id and 
+    w.owner = u.id  and 
+    wi.stock = s.id and 
+    wi.wallet = w.id; 
+    
+select * from all_portfolio;
+
+create or replace VIEW all_profiles as 
+select 
+	u.id  USERID, 
+	u.fname NAME,
+    w.wallet_amount BUYING_POWER
+	from user u, wallet w 
+where 
+    w.owner = u.id;
+    
+select * from all_profiles; 
+
+create or replace VIEW all_sells as 
+select 
+	u.id  USERID, 
+	u.fname NAME,
+    c.code_name TICKER, 
+    t.price SELLING_PRICE, 
+    t.qty SHARES_SOLD, 
+	t.amount AMOUNT_RECEIVED
+	from user u, stock s, transactions t, company c 
+where 
+	s.company = c.id and 
+    t.user = u.id  and 
+    t.stock = s.id and 
+    UPPER(t.type) = 'SELL';
+    
+select * from all_sells; 
+
+create or replace VIEW all_tickers as 
+select
+	s.id 		STOCKID,
+    c.code_name	TICKER_SYMBOL,
+    c.id		COMPANYID,
+    c.name		COMPANY_NAME
+	from stock s, company c 
+where 
+	s.company = c.id;
+    
+select * from all_tickers; 
+
