@@ -1,0 +1,55 @@
+2020-11-28 12:49:26,939 INFO User login URL http://localhost:5000/login
+2020-11-28 12:49:26,945 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 12:49:30,491 DEBUG http://localhost:5000 "POST /login HTTP/1.1" 200 109
+2020-11-28 12:49:30,495 INFO User with email fb@gmail.comlogged in successfully
+2020-11-28 12:50:20,511 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 12:50:22,562 DEBUG http://localhost:5000 "GET /logout HTTP/1.1" 200 3
+2020-11-28 13:01:17,196 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:01:20,385 DEBUG http://localhost:5000 "POST /login HTTP/1.1" 200 109
+2020-11-28 13:01:20,389 INFO User with email fb@gmail.comlogged in successfully
+2020-11-28 13:01:30,011 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:01:32,127 DEBUG http://localhost:5000 "GET /company/a HTTP/1.1" 400 28
+2020-11-28 13:03:56,854 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:03:58,879 DEBUG http://localhost:5000 "GET /company/a HTTP/1.1" 400 28
+2020-11-28 13:04:09,342 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:04:11,371 DEBUG http://localhost:5000 "GET /company/a HTTP/1.1" 400 28
+2020-11-28 13:34:32,085 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:34:35,064 DEBUG http://localhost:5000 "POST /login HTTP/1.1" 200 109
+2020-11-28 13:34:35,066 INFO User with email fb@gmail.comlogged in successfully
+2020-11-28 13:34:37,831 INFO Getting all companies
+2020-11-28 13:34:37,833 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:34:40,605 DEBUG http://localhost:5000 "GET /companies HTTP/1.1" 200 733
+2020-11-28 13:35:54,309 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:35:57,288 DEBUG http://localhost:5000 "POST /login HTTP/1.1" 200 109
+2020-11-28 13:35:57,290 INFO User with email fb@gmail.comlogged in successfully
+2020-11-28 13:36:10,681 INFO Getting company with code AAPL
+2020-11-28 13:36:10,682 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:36:13,499 DEBUG http://localhost:5000 "GET /company/code/AAPL HTTP/1.1" 200 127
+2020-11-28 13:36:13,500 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:36:16,541 DEBUG http://localhost:5000 "GET /company/3/stock HTTP/1.1" 200 223
+2020-11-28 13:38:50,355 INFO Getting company with code AAPL
+2020-11-28 13:38:50,356 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:38:53,137 DEBUG http://localhost:5000 "GET /company/code/AAPL HTTP/1.1" 200 127
+2020-11-28 13:38:53,138 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:38:55,830 DEBUG http://localhost:5000 "GET /company/3/stock HTTP/1.1" 200 223
+2020-11-28 13:41:10,385 INFO Getting company with code AAPL
+2020-11-28 13:41:10,386 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:41:13,135 DEBUG http://localhost:5000 "GET /company/code/AAPL HTTP/1.1" 200 127
+2020-11-28 13:41:13,139 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 13:41:15,863 DEBUG http://localhost:5000 "GET /company/3/stock HTTP/1.1" 200 205
+2020-11-28 16:09:50,978 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 16:09:53,051 DEBUG http://localhost:5000 "GET /logout HTTP/1.1" 200 3
+2020-11-28 16:10:28,572 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 16:10:31,611 DEBUG http://localhost:5000 "POST /login HTTP/1.1" 200 109
+2020-11-28 16:10:31,612 INFO User with email fb@gmail.comlogged in successfully
+2020-11-28 16:11:18,598 INFO Getting all companies
+2020-11-28 16:11:18,599 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 16:11:21,323 DEBUG http://localhost:5000 "GET /companies HTTP/1.1" 200 733
+2020-11-28 16:12:00,148 INFO Getting all stocks
+2020-11-28 16:12:00,149 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 16:12:02,894 DEBUG http://localhost:5000 "GET /stocks HTTP/1.1" 200 1137
+2020-11-28 16:12:32,717 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 16:12:34,776 DEBUG http://localhost:5000 "GET /logout HTTP/1.1" 200 3
+2020-11-28 16:12:45,469 DEBUG Starting new HTTP connection (1): localhost:5000
+2020-11-28 16:12:48,458 DEBUG http://localhost:5000 "POST /login HTTP/1.1" 200 104
+2020-11-28 16:12:48,459 INFO User with email new@gmail.comlogged in successfully

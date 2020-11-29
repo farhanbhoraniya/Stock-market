@@ -107,7 +107,7 @@ def get_stock_by_id(id):
 def get_stock_by_company(id):
     db = DBConnection()
     stock_query = """select stock.id, current_price, available_stocks, 
-    company.id as companyID, name, total_stocks, address, about, code_name from company join stock where stock.company='{}'""".format(id)
+    company.id as companyID, name, total_stocks, address, about, code_name from company join stock on company.id=stock.company where stock.company='{}'""".format(id)
 
     db.cursor.execute(stock_query)
     data = db.cursor.fetchone()

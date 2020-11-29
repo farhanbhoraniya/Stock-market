@@ -1,5 +1,6 @@
 import requests
 import json
+import logging
 from getpass import getpass
 from beautifultable import BeautifulTable
 
@@ -7,8 +8,11 @@ base_url = "http://localhost:5000"
 logged_in = False
 user_details = None
 cookies = {}
+LOG_FILENAME='applicaiton.log'
+logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
 def register():
+    logging.info("Registering new user")
     email = input("Enter email ")
     fname = input("Enter first name ")
     lname = input("Enter last name ")
@@ -46,18 +50,20 @@ def login():
     }
 
     url = base_url + "/login"
-
+    
     r = requests.post(url, data=json.dumps(data))
     if r.status_code == 401:
         print("Authentication Failed. Please try again")
         return None, None
     elif r.status_code == 200:
         print("Logged in successfully")
+        logging.info("User with email " + email + "logged in successfully")
         headers = r.headers
         cookies = headers['Set-Cookie']
         return json.loads(r.text), cookies
 
 def get_all_companies():
+    logging.info("Getting all companies")
     url = base_url + "/companies"
     r = requests.get(url, cookies=cookies)
 
@@ -75,6 +81,7 @@ def get_all_companies():
 
 def get_company_by_id():
     company_id = input("Enter company ID ")
+    logging.info("Getting company with ID " + str(company_id))
     url = base_url + "/company/" + company_id
     r = requests.get(url, cookies=cookies)
     if r.status_code == 200:
@@ -95,13 +102,14 @@ def get_company_by_id():
 def get_company_by_code():
     company_code = input("Enter company code ")
     url = base_url + "/company/code/" + company_code
+    logging.info("Getting company with code " + str(company_code))
     r = requests.get(url, cookies=cookies)
     if r.status_code == 200:
         data = json.loads(r.text)
         company_id = data['id']
         url = base_url + "/company/{}/stock".format(company_id)
         r = requests.get(url, cookies=cookies)
-        
+        print("-------------------")
         for key, value in data.items():
             print(key, ":", value)
 
@@ -138,14 +146,15 @@ def admin_company_operations():
             total_stocks = 0
             address = input("Address of a company ")
             about = input("About company")
-
+            logging.info("Creating company with name " + name)
             if not total_stocks:
                 total_stocks = 0
             else:
                 try:
                     total_stocks = int(total_stocks)
-                except:
+                except Exception as e:
                     print("Invalid input value")
+                    logging.error(e)
                     continue
             data = {
                 'name': name,
@@ -169,11 +178,12 @@ def admin_company_operations():
             total_stocks = input("Total stokcs of a company ")
             address = input("Address of a company ")
             about = input("About company")
-
+            logging.info("Updating the company with ID " + str(ID))
             try:
                 id = int(id)
-            except:
+            except Exception as e:
                 print("Invalid ID")
+                logging.error(e)
                 continue
 
             if total_stocks == '':
@@ -181,8 +191,9 @@ def admin_company_operations():
             else:
                 try:
                     total_stocks = int(total_stocks)
-                except:
+                except Exception as e:
                     print("Invalid input value")
+                    logging.error(e)
                     continue
 
             data = {}
@@ -214,9 +225,10 @@ def admin_company_operations():
             continue
 
 def get_all_stocks():
+    logging.info("Getting all stocks")
     url = base_url + "/stocks"
     r = requests.get(url, cookies=cookies)
-
+    
     if r.status_code == 200:
         data = json.loads(r.text)
         table = BeautifulTable()
@@ -232,6 +244,7 @@ def get_all_stocks():
 def get_stock_by_id():
     stock_id = input("Enter stock ID ")
     url = base_url + "/stock/" + stock_id
+    logging.info("Getting stock with ID " + str(stock_id))
     r = requests.get(url, cookies=cookies)
     if r.status_code == 200:
         data = json.loads(r.text)
@@ -245,6 +258,7 @@ def get_stock_by_id():
 def get_company_stock():
     company_id = input("Enter company ID ")
     url = base_url + "/company/{}/stock".format(company_id)
+    logging.info("Getting stock of company " + str(company_id))
     r = requests.get(url, cookies=cookies)
     if r.status_code == 200:
         data = json.loads(r.text)
@@ -280,11 +294,12 @@ def admin_stock_operations():
             company = input("Enter company ID ")
             current_price = input("Enter current price ")
             available_stocks = input("Enter available stocks ")
-
+            logging.info("Getting company with ID " + str(company))
             try:
                 company = int(company)
-            except:
+            except Exception as e:
                 print("Invalid value")
+                logging.error(e)
                 continue
 
             if not current_price:
@@ -292,8 +307,9 @@ def admin_stock_operations():
             else:
                 try:
                     current_price = int(current_price)
-                except:
+                except Exception as e:
                     print("Invalid value")
+                    logging.error(e)
                     continue
 
             if not available_stocks:
@@ -301,8 +317,9 @@ def admin_stock_operations():
             else:
                 try:
                     available_stocks = int(available_stocks)
-                except:
+                except Exception as e:
                     print("Invalid value")
+                    logging.error(e)
                     continue
 
             data = {
@@ -333,12 +350,14 @@ def admin_stock_operations():
             stock_input = input("Select option ")
 
             if stock_input == "1":
+                logging.info("Updating available stocks for stock " + str(stock_id))
                 available_stocks = input("Available stocks ")
 
                 try:
                     available_stocks = int(available_stocks)
-                except:
+                except Exception as e:
                     print("Invalid value")
+                    logging.error(e)
                     continue
                 
                 data = {
@@ -356,12 +375,14 @@ def admin_stock_operations():
                     print("Error:", data['error'])
 
             elif stock_input == "2":
+                logging.info("Updating current price for stock " + str(stock_id))
                 current_price = input("Current price ")
 
                 try:
                     current_price = int(current_price)
-                except:
+                except Exception as e:
                     print("Invalid value")
+                    logging.error(e)
                     continue
                 
                 data = {
@@ -393,12 +414,14 @@ def admin_stock_operations():
             stock_input = input("Select option ")
 
             if stock_input == "1":
+                logging.info("Updating available stocks for company " + str(company_id))
                 available_stocks = input("Available stocks ")
 
                 try:
                     available_stocks = int(available_stocks)
-                except:
+                except Exception as e:
                     print("Invalid value")
+                    logging.error(e)
                     continue
                 
                 data = {
@@ -416,12 +439,14 @@ def admin_stock_operations():
                     print("Error:", data['error'])
 
             elif stock_input == "2":
+                logging.info("Updating current price for company " + str(company_id))
                 current_price = input("Current price ")
 
                 try:
                     current_price = int(current_price)
-                except:
+                except Exception as e:
                     print("Invalid value")
+                    logging.error(e)
                     continue
                 
                 data = {
@@ -488,7 +513,7 @@ def user_stock_operations():
             get_company_stock()
         elif input_value == "4":
             stock_id = input("Stock ID ")
-
+            logging.info("Getting stock price history for stock " + str(stock_id))
             url = base_url + "/stock/{}/price_history".format(stock_id)
             r = requests.get(url, cookies=cookies)
 
@@ -545,8 +570,10 @@ while True:
             if user_details is not None:
                 logged_in = True
                 cookies['session'] = cookie.split('=')[1]
-            # print(cookies)
+            
         elif input_value == str(0):
+            # infoLog.close()
+            # logger.removeHandler(infoLog)
             break
         else:
             print("Invalid input")
