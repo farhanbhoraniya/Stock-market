@@ -1,3 +1,4 @@
+-- # SJSU CMPE 226 Fall 2020 TEAM 5
 drop database if exists cmpe226p2;
 create database cmpe226p2;
 use cmpe226p2;
@@ -90,6 +91,8 @@ FOREIGN KEY (wallet) REFERENCES wallet(id);
 ALTER TABLE wallet_item
 ADD CONSTRAINT FK_Walletitem_Stock
 FOREIGN KEY (stock) REFERENCES stock(id);
+
+CREATE INDEX codename_index ON company (code_name); 
 
 -- Stored procidure to update the stock price
 

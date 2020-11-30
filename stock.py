@@ -1,3 +1,4 @@
+# SJSU CMPE 226 Fall 2020 TEAM 5
 import json
 from flask import Blueprint, request, session, jsonify
 from dbConnection import DBConnection

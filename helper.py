@@ -1,3 +1,4 @@
+# SJSU CMPE 226 Fall 2020 TEAM 5
 from dbConnection import DBConnection
 
 def get_user_wallet(id):

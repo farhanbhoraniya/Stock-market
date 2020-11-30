@@ -1,3 +1,4 @@
+# SJSU CMPE 226 Fall 2020 TEAM 5
 MYSQL_HOST = "cmpe226p2.c5gzn0l4aoxj.us-east-1.rds.amazonaws.com"
 MYSQL_PORT = 3306
 MYSQL_USERNAME = "admin"
